@@ -1,0 +1,74 @@
+:root{
+  --hover-nav-color: #353f50;
+  --camera: #0404fb;
+  --camera-hover: #f74e16;
+  --join-link: #8b5151;
+  --white: #fff;
+  --dark-90: rgb(14, 35, 56);
+  --white-90: #efe7e7;
+}
+
+body{
+  min-height: 100vh;
+  background: var(--hover-nav-color)!important;
+}
+
+
+[data-camera]{
+  position: absolute;
+  color: var(--camera);
+  cursor: pointer;
+  bottom: 0.55rem;
+}
+[data-camera]:hover {
+  color: var(--camera-hover);
+}
+
+#file{
+  visibility: hidden;
+  display: none;
+}
+.rounded-3:not(.active){
+  color: var(--hover-nav-color);
+  font-weight: 500;
+}
+.rounded-3:not(.active):hover{
+  color: var(--white);
+}
+
+.Detail-card{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 12px 4px var(--dark-90);
+}
+
+.card, .card .list-group-item{
+  background: var(--white-90) !important;
+}
+
+.join-link{
+  text-decoration: none;
+  color: var(--join-link);
+}
+
+.theGuy{
+  color: var(--camera);
+  font-weight: 600;
+  text-decoration-line: underline; 
+  text-decoration-color: var(--camera-hover); 
+  text-decoration-style: wavy;
+}
+
+.theGuy:hover{
+  color: var(--camera-hover);
+}
+
+
+.chats{
+  height: calc(100vh - 4rem);
+  border: 1px solid black;
+  /* display: grid; */
+}
+
