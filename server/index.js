@@ -57,7 +57,8 @@ io.on('connection', (socket) => {
 
     socket.on('message', (message) =>     {
         console.log(socket.id);
-        io.emit('message', `${socket.id.substr(0,2)}: ${message}` );   
+        // io.emit('message', `${socket.id.substr(0,2)}: ${message}` );   
+        io.emit('message',  message);   
     });
 });
 

@@ -46,7 +46,7 @@ const NavBar = () => {
 
     return (
         <>
-        <Navbar bg="primary" data-bs-theme="dark">
+        <Navbar bg="primary" style={{zIndex: 999}} data-bs-theme="dark">
             <Container>
                 <Navbar.Brand as={Link} to="/">ChatApp 101</Navbar.Brand>
                 <Nav className="me-auto">

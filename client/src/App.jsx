@@ -1,30 +1,26 @@
-import React,{ useState } from 'react'
+// import React,{ useState } from 'react'
 
-import { socket } from './socket'
+
 import NavBar from './components/Navbar'
 import Chats from './components/Chats'
 
+import Underway from './components/Underway'
 
 // routers
 import { Route, Routes } from 'react-router-dom';
 
 import './App.css';
 const App = () => {
-  const [text, setText] = useState('')
-
-  socket.on('message', (text='')=>{
-    setText(text)
-  })
-
 
   return (
     <div>
-      {/* <input type="text" />
-      <button onClick={() => socket.emit('message', 'Hello')}>Send</button> */}
+     
       <NavBar />
 
       <Routes>
-        <Route path="/chats" element={<Chats/>} />
+        <Route exact path="/" element={<> </>}/>
+        <Route exact path="/chats" element={<Chats name={crypto.randomUUID()}/>} />
+        <Route exact path="/*" element={<Underway/>} />
       </Routes>
 
       
