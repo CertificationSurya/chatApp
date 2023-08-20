@@ -39,8 +39,8 @@ const NavBar = () => {
     }
 
     // nav active or no
-    const handleProfileClick = (trueOrFalse) => {
-        setIsProfileActive(trueOrFalse)
+    const handleProfileClick = (trueOrFalseorNull) => {
+        setIsProfileActive(trueOrFalseorNull)
     }
 
 
@@ -51,7 +51,8 @@ const NavBar = () => {
                 <Navbar.Brand as={Link} to="/">ChatApp 101</Navbar.Brand>
                 <Nav className="me-auto">
                     <Nav.Link as={Link} to="/" onClick={() => handleProfileClick(true)} className={`${isProfileActive ? 'active bg-body-tertiary border border-info ' : ''}  rounded-3 py-1 me-2`}>Profile</Nav.Link>
-                    <Nav.Link as={Link} to="/chats" onClick={() => handleProfileClick(false)} className={`${!isProfileActive ? 'active bg-body-tertiary border border-info ' : ''} rounded-3 py-1 rounded-3`}>Chats</Nav.Link>
+                    <Nav.Link as={Link} to="/chats" onClick={() => handleProfileClick(false)} className={`${isProfileActive === false ? 'active bg-body-tertiary border border-info ' : ''} rounded-3 py-1 rounded-3`}>Global Chats</Nav.Link>
+                    <Nav.Link as={Link} to="/room" onClick={() => handleProfileClick(null)} className={`${isProfileActive === null ? 'active bg-body-tertiary border border-info ' : ''} rounded-3 py-1 rounded-3`}>Rooms</Nav.Link>
                 </Nav>
                 <Nav>
                     <input ref={fileRef} onChange={handleFileChange} type="file" name="file" id="file" accept='image/jpeg, image/png, image/jpg image/gif' />
@@ -61,7 +62,7 @@ const NavBar = () => {
             </Container>
         </Navbar>
 
-        {location.pathname === '/' && <DetailCard userImg={userImg}/>}
+        {location.pathname === '/' && <DetailCard userImg={userImg} handleProfileClick={handleProfileClick}/>}
         </>
     )
 }

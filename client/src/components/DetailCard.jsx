@@ -5,7 +5,7 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Image from 'react-bootstrap/Image';
 import PropTypes from 'prop-types';
 
-const DetailCard = ({userImg, name='Lorem12', age=23}) => {
+const DetailCard = ({userImg, name='Lorem12', age=23, handleProfileClick}) => {
   return (
     <div className="Detail-card">
 
@@ -20,7 +20,7 @@ const DetailCard = ({userImg, name='Lorem12', age=23}) => {
         <ListGroup.Item>Age: {age}</ListGroup.Item>
       </ListGroup>
       <Card.Body>
-        <Card.Link as={Link} to="/room" className='join-link'>Join Room with <span className='theGuy'>{name}</span></Card.Link>
+        <Card.Link as={Link} to="/room" onClick={() => handleProfileClick(null)} className='join-link'>Go to <span className='theGuy'>Room</span></Card.Link>
       </Card.Body>
     </Card>
     </div>
@@ -30,7 +30,8 @@ const DetailCard = ({userImg, name='Lorem12', age=23}) => {
 DetailCard.propTypes = {
     userImg: PropTypes.any.isRequired,
     name: PropTypes.string,
-    age: PropTypes.number
+    age: PropTypes.number,
+    handleProfileClick: PropTypes.func.isRequired
 }
 
 export default DetailCard
