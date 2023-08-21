@@ -13,10 +13,27 @@ io.on('connection', (socket) => {
     console.log('a user connected');
 
     socket.on('message', (message) =>     {
-        console.log(socket.id);
-        // io.emit('message', `${socket.id.substr(0,2)}: ${message}` );   
+        console.log(socket.id); 
         io.emit('message',  message);   
     });
+
+    socket.on('join_room', (message)=>{
+        // Join the room
+        socket.join(message.roomId); 
+        io.emit("userJoined", message);
+    })
+
+    socket.on('G-message', (messageObj) => {
+        io.emit('roomMessage', messageObj);
+    });
+
+    socket.on('createRoom', (messageObj) => {
+        console.log(messageObj)
+        io.emit('roomCreated', messageObj);
+    });
+
+
+
 });
 
 server.listen(8080, () => console.log('listening on http://localhost:8080') );

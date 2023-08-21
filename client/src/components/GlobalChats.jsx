@@ -1,40 +1,30 @@
 import  {  useState } from 'react'
-
-import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
-
 import PropTypes from 'prop-types';
 
 // Added Socket io
 import { socket } from '../socket'
-import ChatItems from './subComponents/ChatItems';
+import ChatFragment from './ChatFragment';
 
-const Chats = ({ name }) => {
+const GlobalChats = ({ name }) => {
     const [text, setText] = useState('')
     const [messages, setMessages] = useState([])
 
     // when message is emmited
     socket.on('message', (messageObj) => {
-
         const isMine = messageObj.senderId === socket.id;
-
         if (isMine) {
             setMessages([{ senderId: socket.id, message: messageObj.message, isMine, name: messageObj.name }, ...messages, ])
         }
-
         else {
             setMessages([{ senderId: socket.id, message: messageObj.message, isMine: false, name: messageObj.name }, ...messages, ])
         }
- 
     })
 
     const handleSubmit = (e) => {
         e.preventDefault()
-
         text.trim()
         if (text.length > 0) {
             socket.emit('message', { senderId: socket.id, message: text, name })
-
             setText('')
         }
         else {
@@ -44,38 +34,39 @@ const Chats = ({ name }) => {
     }
 
     return (
+        <ChatFragment messages={messages} handleSubmit={handleSubmit} text={text} setText={setText} />
 
-        <div className="chats">
+        // <div className="chats">
 
-            <div className='all-chat'>
-                {messages.length > 0 && messages.map((messageObj, index) => (
+        //     <div className='all-chat'>
+        //         {messages.length > 0 && messages.map((messageObj, index) => (
 
-                    <ChatItems messageObj={messageObj} index={index} key={index} />
+        //             <ChatItems messageObj={messageObj} index={index} key={index} />
 
-                ))}
+        //         ))}
 
-            </div>
+        //     </div>
 
-            <InputGroup className="mb-3 chat-field">
-                <Form.Control
-                    placeholder="message..."
-                    aria-label="message"
-                    aria-describedby="basic-addon1"
-                    value={text} onChange={(e) => setText(e.target.value)}
-                />
+        //     <InputGroup className="mb-3 chat-field">
+        //         <Form.Control
+        //             placeholder="message..."
+        //             aria-label="message"
+        //             aria-describedby="basic-addon1"
+        //             value={text} onChange={(e) => setText(e.target.value)}
+        //         />
 
-                <InputGroup.Text onClick={handleSubmit} id="send-out" className="fa-solid fa-paper-plane" />
-            </InputGroup>
+        //         <InputGroup.Text onClick={handleSubmit} id="send-out" className="fa-solid fa-paper-plane" />
+        //     </InputGroup>
 
-        </div>
+        // </div>
 
     )
 }
 
-Chats.propTypes = {
+GlobalChats.propTypes = {
     name: PropTypes.string.isRequired
 }
 
-export default Chats
+export default GlobalChats
 
 
