@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 
 const ChatItems = ({messageObj, index}) => {
 
-    console.log(messageObj.message)
+    // console.log(messageObj.message)
     
     const maxLimit = index > 6;
     // const last5message = 

@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Kalam&display=swap');
 
 :root {
-  --hover-nav-color: #353f50;
+  --hover-nav-color: #394354;
   --camera: #0404fb;
   --camera-hover: #f74e16;
   --join-link: #8b5151;
@@ -22,7 +22,10 @@ body{
   font-family: 'Kalam', cursive;
 }
 
-
+.navbar:nth-of-type(2){
+  border: 1px solid black;
+  display: none;
+}
 
 [data-camera] {
   position: absolute;
@@ -41,8 +44,7 @@ body{
 }
 
 .rounded-3:not(.active) {
-  color: var(--hover-nav-color);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .rounded-3:not(.active):hover {
@@ -87,15 +89,26 @@ body{
   margin: 0.5rem auto;
   display: grid;
   grid-template-rows: 1fr 2rem;
+  grid-template-columns: 60%;
   row-gap: 1.5rem;
   padding: 2rem 1rem;
   background: var(--dark-90);
   box-shadow: 0 0 3px 1px var(--white-90);
+  justify-content: space-around;
   border-radius: 1rem;
+}
+
+.chats .exit-room{
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  cursor: pointer;
+
 }
 
 .chats .all-chat{
   color: var(--white);
+  width: 100%;
   display: flex;
   flex-direction: column-reverse;
   row-gap: 20px;
@@ -170,9 +183,16 @@ body{
 }
 
 @media screen and (max-width: 60rem) {
-  .roomProfile {
+  .container{
+    flex-direction: column;
+    justify-content: center;
+  }
+  .nav-items{
+    margin: auto;
+  }
+  .chats {
     margin: 0;
-    height: calc(100vh - 3.9rem);
+    height: calc(100vh - 8.5rem);
     border-radius: 0;
     flex-direction: column;
     justify-content: center;

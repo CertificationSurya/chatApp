@@ -14,12 +14,8 @@ import { Link, useLocation } from 'react-router-dom';
 import DetailCard from './DetailCard';
 
 const NavBar = () => {
- 
-    const location = useLocation()
-    console.log(location)
+    const currentLocation = useLocation().pathname
 
-
-    const [isProfileActive, setIsProfileActive] = useState(true)
     const [userImg, setUserImg] = useState(myImg)
 
     // input file ref
@@ -38,31 +34,25 @@ const NavBar = () => {
 
     }
 
-    // nav active or no
-    const handleProfileClick = (trueOrFalseorNull) => {
-        setIsProfileActive(trueOrFalseorNull)
-    }
-
-
     return (
         <>
-        <Navbar bg="primary" style={{zIndex: 999}} data-bs-theme="dark">
-            <Container>
-                <Navbar.Brand as={Link} to="/">ChatApp 101</Navbar.Brand>
-                <Nav className="me-auto">
-                    <Nav.Link as={Link} to="/" onClick={() => handleProfileClick(true)} className={`${isProfileActive ? 'active bg-body-tertiary border border-info ' : ''}  rounded-3 py-1 me-2`}>Profile</Nav.Link>
-                    <Nav.Link as={Link} to="/chats" onClick={() => handleProfileClick(false)} className={`${isProfileActive === false ? 'active bg-body-tertiary border border-info ' : ''} rounded-3 py-1 rounded-3`}>Global Chats</Nav.Link>
-                    <Nav.Link as={Link} to="/room" onClick={() => handleProfileClick(null)} className={`${isProfileActive === null ? 'active bg-body-tertiary border border-info ' : ''} rounded-3 py-1 rounded-3`}>Rooms</Nav.Link>
-                </Nav>
-                <Nav>
-                    <input ref={fileRef} onChange={handleFileChange} type="file" name="file" id="file" accept='image/jpeg, image/png, image/jpg image/gif' />
-                    <label data-camera='camera' htmlFor="file" className="fa-solid fa-camera" onClick={handleFileChange} />
-                    <Image src={userImg} roundedCircle width='45rem' height='45rem' style={{ objectFit: 'cover' }} />
-                </Nav>
-            </Container>
-        </Navbar>
+            <Navbar bg="primary" style={{ zIndex: 999 }} data-bs-theme="dark" className='navbar'>
+                <Container>
+                    <Navbar.Brand as={Link} to="/" >ChatApp 101</Navbar.Brand>
+                    <Nav className="nav-items | me-auto ">
+                        <Nav.Link as={Link} to="/"  className={`${currentLocation=='/' ? 'active bg-body-tertiary border border-info ' : ''}  rounded-3 py-1 me-2`}>Profile</Nav.Link>
+                        <Nav.Link as={Link} to="/chats" className={`${currentLocation=='/chats' ? 'active bg-body-tertiary border border-info ' : ''} rounded-3 py-1 rounded-3`}>Global Chats</Nav.Link>
+                        <Nav.Link as={Link} to="/room" className={`${currentLocation.includes('/room') ? 'active bg-body-tertiary border border-info ' : ''} rounded-3 py-1 rounded-3`}>Rooms</Nav.Link>
+                    </Nav>
+                    <Nav>
+                        <input ref={fileRef} onChange={handleFileChange} type="file" name="file" id="file" accept='image/jpeg, image/png, image/jpg image/gif' />
+                        <label data-camera='camera' htmlFor="file" className="fa-solid fa-camera" onClick={handleFileChange} />
+                        <Image src={userImg} roundedCircle width='45rem' height='45rem' style={{ objectFit: 'cover' }} />
+                    </Nav>
+                </Container>
+            </Navbar>
 
-        {location.pathname === '/' && <DetailCard userImg={userImg} handleProfileClick={handleProfileClick}/>}
+            {currentLocation === '/' && <DetailCard userImg={userImg} />}
         </>
     )
 }

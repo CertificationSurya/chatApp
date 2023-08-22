@@ -1,17 +1,26 @@
-import React from 'react'
-import { Form,InputGroup }from 'react-bootstrap';
+import { Form, InputGroup } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 import ChatItems from './subComponents/ChatItems';
 import PropTypes from 'prop-types';
 
-const ChatFragment = ({messages, handleSubmit, text, setText}) => {
-  return (
-    <div className="chats">
+const ChatFragment = ({ messages, handleSubmit, text, setText, roomName='Global' }) => {
 
+    const navigation = useNavigate()
+
+    const exitToHome = ()=>{
+        navigation('/');
+    }
+
+    return (
+        <div className="chats">
+            <div onClick={exitToHome} className="exit-room" style={{color: 'var(--camera-hover)', fontSize: '1.5rem'}} title='Exit Room'><i className='fa-solid fa-right-from-bracket'></i></div>
+            <div className="roomName position-absolute p-2 color-primary" style={{color: 'var(--camera-hover)'}}>
+              on Room : {roomName}
+            </div>
             <div className='all-chat'>
                 {messages.length > 0 && messages.map((messageObj, index) => (
                     <ChatItems messageObj={messageObj} index={index} key={index} />
-
                 ))}
 
             </div>
@@ -28,14 +37,15 @@ const ChatFragment = ({messages, handleSubmit, text, setText}) => {
             </InputGroup>
 
         </div>
-  )
+    )
 }
 
 ChatFragment.propTypes = {
     messages: PropTypes.array.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     text: PropTypes.string.isRequired,
-    setText: PropTypes.func.isRequired
+    setText: PropTypes.func.isRequired,
+    roomName: PropTypes.string
 }
 
 export default ChatFragment

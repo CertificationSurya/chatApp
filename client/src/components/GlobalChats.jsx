@@ -1,11 +1,15 @@
-import  {  useState } from 'react'
-import PropTypes from 'prop-types';
+import { useState, useContext } from 'react'
+import ProfileContext from '../context/ProfileContext'
 
 // Added Socket io
 import { socket } from '../socket'
 import ChatFragment from './ChatFragment';
 
-const GlobalChats = ({ name }) => {
+const GlobalChats = () => {
+    // using context
+    const data = useContext(ProfileContext)
+    const name = data.name;
+
     const [text, setText] = useState('')
     const [messages, setMessages] = useState([])
 
@@ -13,10 +17,10 @@ const GlobalChats = ({ name }) => {
     socket.on('message', (messageObj) => {
         const isMine = messageObj.senderId === socket.id;
         if (isMine) {
-            setMessages([{ senderId: socket.id, message: messageObj.message, isMine, name: messageObj.name }, ...messages, ])
+            setMessages([{ senderId: socket.id, message: messageObj.message, isMine, name: messageObj.name }, ...messages,])
         }
         else {
-            setMessages([{ senderId: socket.id, message: messageObj.message, isMine: false, name: messageObj.name }, ...messages, ])
+            setMessages([{ senderId: socket.id, message: messageObj.message, isMine: false, name: messageObj.name }, ...messages,])
         }
     })
 
@@ -61,10 +65,6 @@ const GlobalChats = ({ name }) => {
         // </div>
 
     )
-}
-
-GlobalChats.propTypes = {
-    name: PropTypes.string.isRequired
 }
 
 export default GlobalChats

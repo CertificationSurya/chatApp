@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react'
-// import queryString from 'query-string'
-import PropTypes from 'prop-types'
+import  { useState, useContext } from 'react'
 import { socket } from '../socket'
 import { useLocation, useParams } from 'react-router-dom'
+import ProfileContext from '../context/ProfileContext'
 
 import ChatFragment from './ChatFragment'
 
-const JoinRoom = ({ name = '' }) => {
-    // const [users, setUsers] = useState([])
+const JoinRoom = () => {
+
+    const {name} = useContext(ProfileContext)
     let users = [];
 
     const [gMessages, setGMessages] = useState([])
@@ -18,13 +18,14 @@ const JoinRoom = ({ name = '' }) => {
     // data
     const roomId = queryParams.get('uid');
     const roomName = useParams().roomName;
+    // console.log(roomName)
 
     // state
     const [text, setText] = useState('')
 
     // when message is emmited
     socket.on('roomMessage', (messageObj) => {
-        console.log(messageObj)
+        // console.log(messageObj)
         // if (messageObj.roomId === roomId) {
 
             const isMine = messageObj.senderId === socket.id;
@@ -57,14 +58,14 @@ const JoinRoom = ({ name = '' }) => {
        const ExistingUser = users.find(user => user.userId === userId)
        if (!ExistingUser){
            users.push({ userName, userId })
-           console.log(users);
+        //    console.log(users);
        } 
     });
 
 
     return (
         <>
-            <ChatFragment text={text} setText={setText} handleSubmit={handleSubmit} messages={gMessages} />
+            <ChatFragment text={text} setText={setText} handleSubmit={handleSubmit} messages={gMessages} roomName={roomName}/>
         </>
     )
 }
@@ -72,7 +73,7 @@ const JoinRoom = ({ name = '' }) => {
 export default JoinRoom
 
 
-JoinRoom.propTypes = {
-    // location: PropTypes.object.isRequired,
-    name: PropTypes.string.isRequired
-}
+// JoinRoom.propTypes = {
+//     // location: PropTypes.object.isRequired,
+//     name: PropTypes.string.isRequired
+// }

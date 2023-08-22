@@ -10,10 +10,10 @@ const io = require('socket.io')(server, {
 });
 
 io.on('connection', (socket) => {
-    console.log('a user connected');
+    // console.log('a user connected');
 
     socket.on('message', (message) =>     {
-        console.log(socket.id); 
+        // console.log(socket.id); 
         io.emit('message',  message);   
     });
 
@@ -31,8 +31,6 @@ io.on('connection', (socket) => {
         console.log(messageObj)
         io.emit('roomCreated', messageObj);
     });
-
-
 
 });
 

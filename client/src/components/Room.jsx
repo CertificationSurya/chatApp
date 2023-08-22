@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import { Card, ListGroup, Button, InputGroup, Form } from 'react-bootstrap'
+import { useState } from 'react'
+import Form from 'react-bootstrap/Form'
+import { Card, ListGroup, Button, InputGroup } from 'react-bootstrap'
 import { Link } from 'react-router-dom';
 import { socket } from '../socket'
 
@@ -40,14 +41,14 @@ const Room = () => {
         setRoomName('')
     }
 
-    useState(()=>{
+    useState(() => {
         socket.on('roomCreated', (roomObj) => {
             const existingRoom = availableRooms.find(room => room.roomName === roomObj.roomName);
             if (!existingRoom) {
                 setAvailableRooms(prevState => [...prevState, roomObj]);
             }
         });
-    },[roomCount])
+    }, [roomCount])
 
     return (
         <div className="chats roomProfile d-flex  align-items-center">
@@ -55,13 +56,16 @@ const Room = () => {
             <div className="available-rooms">
                 <Card style={{ width: '18rem' }}>
                     <Card.Body>
-                        <Card.Title className="text-center"> Total Rooms : </Card.Title>
+                        <Card.Title className="text-center"> Total Rooms : {roomCount}</Card.Title>
                     </Card.Body>
 
                     {availableRooms &&
                         availableRooms.map(room => (
                             <ListGroup className="list-group-flush border-0  pb-2" key={room.uid} >
-                                <ListGroup className='d-flex flex-row justify-content-around align-items-center' > {room.roomName}
+                                <ListGroup className='d-flex flex-row justify-content-between align-items-center px-3' >
+                                    <span>
+                                        {room.roomName}
+                                    </span>
                                     <Link to={`/room/${room.roomName}?uid=${room.uid}`}>
                                         <Button variant="primary" size="sm" active>
                                             Join this Room
@@ -83,12 +87,13 @@ const Room = () => {
                         <span onClick={() => setExpandField(prevState => !prevState)} className={`${expandField ? 'fa-solid fa-circle-minus' : 'fa-solid fa-circle-plus'} | fs-1 text-danger`} style={{ cursor: 'pointer' }}></span>
                         {
                             expandField && (
-                                <InputGroup className="my-3 container">
+                                <InputGroup className="p-2">
                                     <Form.Control
                                         placeholder='Room Name...'
                                         aria-label="Example text with button addon"
                                         aria-describedby="basic-addon1"
                                         value={roomName} onChange={(e) => setRoomName(e.target.value)}
+                                        className='mx-1'
                                     />
                                     <Button variant="outline-primary" id="button-addon1" onClick={handleCreateRoom}>
                                         Create
