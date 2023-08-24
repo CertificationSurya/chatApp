@@ -10,7 +10,7 @@ const ChatItems = ({messageObj, index}) => {
 if (!maxLimit) {
   return (
     
-        <div className={`chat-message ${messageObj.isMine ? 'mine' : 'others'}`}>
+        <div className={`chat-message scale-up ${messageObj.isMine ? 'mine' : 'others'}`}>
             <p className='message text'>{messageObj.message}</p>
             <p className="messageBy text">{messageObj.isMine ? 'You' : messageObj.name}</p>
         </div>

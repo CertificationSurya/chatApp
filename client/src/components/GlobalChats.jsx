@@ -5,6 +5,8 @@ import ProfileContext from '../context/ProfileContext'
 import { socket } from '../socket'
 import ChatFragment from './ChatFragment';
 
+// let gUsers = [];
+
 const GlobalChats = () => {
     // using context
     const data = useContext(ProfileContext)
@@ -24,8 +26,25 @@ const GlobalChats = () => {
         }
     })
 
+    // useEffect(()=>{
+    //     socket.on('gUserJoined', (userId) => {
+    //         console.log(userId)
+    //         const ExistingUser = gUsers.find(eachUserId => eachUserId === userId)
+    //         if (!ExistingUser){
+    //             gUsers.push(userId)
+    //             console.log(gUsers);
+    //         } 
+    //         else return;
+    //      });
+    //      socket.on('roomDisconnect', (leftUserId)=>{
+    //         gUsers.filter(id=> id !==leftUserId)
+    //         console.log(gUsers)
+    //      })
+        
+    // })
+
     const handleSubmit = (e) => {
-        e.preventDefault()
+            e.preventDefault()
         text.trim()
         if (text.length > 0) {
             socket.emit('message', { senderId: socket.id, message: text, name })
@@ -39,31 +58,6 @@ const GlobalChats = () => {
 
     return (
         <ChatFragment messages={messages} handleSubmit={handleSubmit} text={text} setText={setText} />
-
-        // <div className="chats">
-
-        //     <div className='all-chat'>
-        //         {messages.length > 0 && messages.map((messageObj, index) => (
-
-        //             <ChatItems messageObj={messageObj} index={index} key={index} />
-
-        //         ))}
-
-        //     </div>
-
-        //     <InputGroup className="mb-3 chat-field">
-        //         <Form.Control
-        //             placeholder="message..."
-        //             aria-label="message"
-        //             aria-describedby="basic-addon1"
-        //             value={text} onChange={(e) => setText(e.target.value)}
-        //         />
-
-        //         <InputGroup.Text onClick={handleSubmit} id="send-out" className="fa-solid fa-paper-plane" />
-        //     </InputGroup>
-
-        // </div>
-
     )
 }
 
