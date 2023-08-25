@@ -1,5 +1,7 @@
 # Chat App
 
+## [live site](https://certi-chat-app-client.vercel.app/)
+
 Welcome to the Chat App! This repository contains both the client-side and server-side components required to run the app. Follow the instructions below to set up and run the chat app on your local machine.
 
 ## Table of Contents
