@@ -12,6 +12,7 @@
 
 body{
   min-height: 100vh;
+  overflow: hidden;
   background: var(--hover-nav-color) !important;
 }
 
@@ -84,9 +85,10 @@ body{
 
 .chats {
   position: relative;
-  height: calc(100vh - 5rem);
+  top: 0.5rem;
+  height: calc(100vh - 2rem);
   max-width: 60rem;
-  margin: 0.5rem auto;
+  margin: 1rem auto;
   display: grid;
   grid-template-rows: 1fr 2rem;
   grid-template-columns: 60%;
@@ -97,22 +99,43 @@ body{
   justify-content: space-around;
   border-radius: 1rem;
 }
+.chats.roomProfile{
+  height: calc(100vh - 6rem);
+}
+
+.chats.navActive{
+  top: 0;
+  height: calc(100vh - 6rem);
+}
 
 .chats .exit-room{
   position: absolute;
-  top: 0.5rem;
+  top: 0;
   right: 0.5rem;
   cursor: pointer;
 
 }
 
 .chats .all-chat{
+  position: relative;
   color: var(--white);
   width: 100%;
   display: flex;
   flex-direction: column-reverse;
   row-gap: 20px;
 }
+
+.all-chat span{
+  color: var(--camera-hover);
+}
+
+.all-chat .joined-room{
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
 .all-chat .chat-message{
   display: flex;
   flex-direction: column;
@@ -190,12 +213,15 @@ body{
   .nav-items{
     margin: auto;
   }
-  .chats {
+  .chats{
     margin: 0;
-    height: calc(100vh - 8.5rem);
+    height: 100vh;
     border-radius: 0;
     flex-direction: column;
     justify-content: center;
     
+  }
+  .chats.navActive{
+    height: calc(100vh - 8rem);
   }
 }

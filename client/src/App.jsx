@@ -11,18 +11,22 @@ import { Route, Routes } from 'react-router-dom';
 import './App.css';
 import Room from './components/Room';
 import JoinRoom from './components/JoinRoom';
+import { useState } from 'react';
 const App = () => {
+
+  const [noEscape, setNoEscape] = useState(false)
+  console.log(noEscape)
   return (
 
       <div>
-        <NavBar />
-
+          { !noEscape && <NavBar noEscape={noEscape}/> }
         <Routes>
-          <Route exact path="/" element={<> <NavBar/></>} />
-          <Route exact path="/chats" element={<GlobalChats />} />
-          <Route exact path="/room" element={<Room />} />
-          <Route exact path="/room/:roomName" element={<JoinRoom name={name} />} />
-          <Route exact path="/*" element={<Underway />} />
+        { !noEscape && <Route exact path="/" element={<> <NavBar noEscape={noEscape}/></>} />}
+
+        <Route exact path="/chats" element={<GlobalChats noEscape={noEscape}/>} />
+        <Route exact path="/room" element={<Room setNoEscape={setNoEscape} />} />
+        <Route exact path="/room/:roomName" element={<JoinRoom name={name} setNoEscape={setNoEscape} noEscape={noEscape}/>} />
+        <Route exact path="/*" element={<Underway />} />
         </Routes>
       </div>
 

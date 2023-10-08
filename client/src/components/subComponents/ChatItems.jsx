@@ -11,6 +11,7 @@ if (!maxLimit) {
   return (
     
         <div className={`chat-message scale-up ${messageObj.isMine ? 'mine' : 'others'}`}>
+            {/* <p>{newUser}</p> */}
             <p className='message text'>{messageObj.message}</p>
             <p className="messageBy text">{messageObj.isMine ? 'You' : messageObj.name}</p>
         </div>
@@ -21,7 +22,8 @@ if (!maxLimit) {
 
 ChatItems.propTypes = {
     messageObj: PropTypes.object.isRequired,
-    index: PropTypes.number.isRequired
+    index: PropTypes.number.isRequired,
+    // newUser: PropTypes.string.isRequired
 }
 
 export default ChatItems

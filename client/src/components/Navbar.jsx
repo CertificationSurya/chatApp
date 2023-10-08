@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import PropTypes from 'prop-types';
 // import React from 'react'
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
@@ -13,11 +14,9 @@ import { Link, useLocation } from 'react-router-dom';
 // Component
 import DetailCard from './DetailCard';
 
-const NavBar = () => {
+const NavBar = ({noEscape}) => {
     const currentLocation = useLocation().pathname
-
     const [userImg, setUserImg] = useState(myImg)
-
     // input file ref
     const fileRef = useRef(null)
 
@@ -36,7 +35,7 @@ const NavBar = () => {
 
     return (
         <>
-            <Navbar bg="primary" style={{ zIndex: 999 }} data-bs-theme="dark" className='navbar'>
+            <Navbar bg="primary" style={{ zIndex: 999 }} data-bs-theme="dark" className={`navbar ${noEscape? "" : "navActive"}`}>
                 <Container>
                     <Navbar.Brand as={Link} to="/" >ChatApp 101</Navbar.Brand>
                     <Nav className="nav-items | me-auto ">
@@ -58,3 +57,7 @@ const NavBar = () => {
 }
 
 export default NavBar
+
+NavBar.propTypes = {
+    noEscape: PropTypes.bool.isRequired
+}

@@ -4,11 +4,11 @@ import { Card, ListGroup, Button, InputGroup } from 'react-bootstrap'
 import { Link } from 'react-router-dom';
 import { socket } from '../socket'
 
-
+import PropTypes from "prop-types"
 
 const defaultRoom = { roomName: 'defaultRoom', uid: '123' }
 
-const Room = () => {
+const Room = ({setNoEscape}) => {
     const [availableRooms, setAvailableRooms] = useState([defaultRoom])
     const [expandField, setExpandField] = useState(false)
     const [roomName, setRoomName] = useState('')
@@ -67,7 +67,7 @@ const Room = () => {
                                         {room.roomName}
                                     </span>
                                     <Link to={`/room/${room.roomName}?uid=${room.uid}`}>
-                                        <Button variant="primary" size="sm" active>
+                                        <Button variant="primary" size="sm" active onClick={()=> {setNoEscape(true); console.log("d")}}>
                                             Join this Room
                                         </Button>
                                     </Link>
@@ -110,3 +110,8 @@ const Room = () => {
 }
 
 export default Room
+
+
+Room.propTypes = {
+    setNoEscape: PropTypes.func.isRequired
+}
