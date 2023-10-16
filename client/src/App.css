@@ -108,10 +108,15 @@ body{
   height: calc(100vh - 6rem);
 }
 
+.chats .roomName{
+  top: 1rem;
+  left: 1rem;
+}
+
 .chats .exit-room{
   position: absolute;
-  top: 0;
-  right: 0.5rem;
+  top: 1rem;
+  right: 1rem;
   cursor: pointer;
 
 }

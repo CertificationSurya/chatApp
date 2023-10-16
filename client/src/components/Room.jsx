@@ -32,7 +32,6 @@ const Room = ({setNoEscape}) => {
         // if name is suitable
         else if (roomReg.test(roomName)) {
             socket.emit('createRoom', { roomName, uid: socket.id });
-            setRoomCount(prevState => prevState + 1)
         }
 
         else {
@@ -45,6 +44,7 @@ const Room = ({setNoEscape}) => {
         socket.on('roomCreated', (roomObj) => {
             const existingRoom = availableRooms.find(room => room.roomName === roomObj.roomName);
             if (!existingRoom) {
+                setRoomCount(roomCount=> roomCount+1)  // when a room is created add room_count
                 setAvailableRooms(prevState => [...prevState, roomObj]);
             }
         });

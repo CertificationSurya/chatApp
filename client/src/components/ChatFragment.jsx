@@ -86,7 +86,7 @@ const ChatFragment = ({
 
         {exitGuy && (
           <p className="joined-room text-center color-danger">
-            <span>{exitGuy}</span> Exitted The Room
+            <span>{exitGuy}</span> Exited The Room
           </p>
         )}
         {messages.length > 0 &&
