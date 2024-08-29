@@ -1,120 +1,120 @@
-import { useState, useContext } from "react";
-import { socket } from "../socket";
-import { useLocation, useParams } from "react-router-dom";
-import PropTypes from "prop-types";
+import {useState, useContext, useEffect} from "react";
+import {socket} from "../socket";
+import {useLocation, useParams} from "react-router-dom";
 
-import ProfileContext from "../context/ProfileContext";
 import ChatFragment from "./ChatFragment";
+import {useGlobalContext} from "../context/GlobalProvider";
 
-const JoinRoom = ({setNoEscape, noEscape}) => {
+const JoinRoom = () => {
+	const {profileData, noEscape, setNoEscape} = useGlobalContext();
+	const {name} = profileData;
 
-  const { name } = useContext(ProfileContext);
-  let users = [];
-  const [exitGuy, setExitGuy] = useState("");
-  const [newUser, setNewUser] = useState("");
-  const [gMessages, setGMessages] = useState([]);
+	const [exitGuy, setExitGuy] = useState("");
+	const [newUser, setNewUser] = useState("");
+	const [gMessages, setGMessages] = useState([]);
+	const [users, setUsers] = useState([]);
 
-  // setup get data from url
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
+	// setup get data from url
+	const location = useLocation();
+	const queryParams = new URLSearchParams(location.search);
 
-  // data
-  const roomId = queryParams.get("uid");
-  const roomName = useParams().roomName;
-  // console.log(roomName)
+	// data
+	const roomId = queryParams.get("uid");
+	const roomName = useParams().roomName;
+	// console.log(roomName)
 
-  // state
-  const [text, setText] = useState("");
+	// state
+	const [text, setText] = useState("");
 
-  // when message is emmited
-  socket.on("roomMessage", (messageObj) => {
-    // console.log(messageObj)
-    // if (messageObj.roomId === roomId) {
+	const handleSubmit = (e) => {
+		e.preventDefault();
 
-    const isMine = messageObj.senderId === socket.id;
-    if (isMine) {
-      setGMessages([
-        {
-          senderId: socket.id,
-          message: messageObj.message,
-          isMine,
-          name: messageObj.name,
-        },
-        ...gMessages,
-      ]);
-    } else {
-      setGMessages([
-        {
-          senderId: socket.id,
-          message: messageObj.message,
-          isMine: false,
-          name: messageObj.name,
-        },
-        ...gMessages,
-      ]);
-    }
-  });
+		text.trim();
+		if (text.length > 0) {
+			socket.emit("roomMessage", {
+				senderId: socket.id,
+				message: text,
+				name,
+				roomId,
+			});
+			setText("");
+		} else {
+			setText("");
+			alert("please fill the field before sending");
+		}
+	};
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+	useEffect(() => {
+		const handleUserJoined = ({joineeId: userId, name: userName}) => {
+			console.log(userId, userName, socket.id);
+			if (userId !== socket.id) {
+				setNewUser(name);
+				const ExistingUser = users.find((user) => user.userId === userId);
+				if (!ExistingUser) {
+					setUsers((prev) => [...prev, {userName, userId}]);
+				}
+			}
+		};
 
-    text.trim();
-    if (text.length > 0) {
-      socket.emit("G-message", {
-        senderId: socket.id,
-        message: text,
-        name,
-        roomId,
-      });
-      setText("");
-    } else {
-      setText("");
-      alert("please fill the field before sending");
-    }
-  };
+		const handleUserExited = (name) => {
+			setExitGuy(name);
+		};
 
-  socket.emit("join_room", { userId: socket.id, userName: name, roomId });
+		/**
+		 * @typedef {import ('../../js_docs/chatType').RoomMsgObjType RoomMsgObjType}
+		 * @param {RoomMsgObjType} messageObj
+		 */
+		const handleRoomMessage = (messageObj) => {
+			// console.log(messageObj);
+			const isMine = messageObj.senderId === socket.id;
+			setGMessages((prevMsgObj) => [
+				{
+					senderId: messageObj.senderId,
+					message: messageObj.message,
+					isMine,
+					name: messageObj.name,
+				},
+				...prevMsgObj,
+			]);
+		};
 
-  socket.on("userJoined", ({ userId, userName }) => {
-    const ExistingUser = users.find((user) => user.userId === userId);
-    if (!ExistingUser) {
-      users.push({ userName, userId });
-      console.log(users);
-    }
-  });
+		// when message is emmited
+		socket.on("roomMessage", handleRoomMessage);
+		socket.on("userJoined", handleUserJoined);
+		socket.on("userExited", handleUserExited);
 
-  socket.on("JoinedUser", (name) => {
-    setNewUser(name);
-  });
+		return () => {
+			socket.off("roomMessage", handleRoomMessage);
+			socket.off("userJoined", handleUserJoined);
+			socket.off("UserExited", handleUserExited);
+		};
+	}, [socket]);
 
-  socket.on("userExitted",(name)=>{
-    setExitGuy(name);
-  })
-  
-  return (
-    <>
-      <ChatFragment
-        text={text}
-        setText={setText}
-        handleSubmit={handleSubmit}
-        messages={gMessages}
-        roomName={roomName}
-        newUser={newUser}
-        setNewUser={setNewUser}
-        roomId={roomId}
-        name={name}
-        exitGuy={exitGuy}
-        setExitGuy={setExitGuy}
-        setNoEscape={setNoEscape}
-        noEscape={noEscape}
-      />
-    </>
-  );
+	useEffect(() => {
+		socket.emit("userJoined", {name, roomId});
+
+		return () => {
+			socket.emit("userExited", roomId);
+		};
+	}, []);
+
+	return (
+		<>
+			<ChatFragment
+				text={text}
+				setText={setText}
+				handleSubmit={handleSubmit}
+				messages={gMessages}
+				roomName={roomName}
+				newUser={newUser}
+				setNewUser={setNewUser}
+				roomId={roomId}
+				name={name}
+				exitGuy={exitGuy}
+				setExitGuy={setExitGuy}
+			/>
+		</>
+	);
 };
 
 export default JoinRoom;
-
-JoinRoom.propTypes = {
-    setNoEscape: PropTypes.func.isRequired,
-    noEscape: PropTypes.bool.isRequired
-}

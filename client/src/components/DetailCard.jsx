@@ -1,128 +1,121 @@
-// import React from 'react'
-import { Link } from 'react-router-dom';
-// import Card from 'react-bootstrap/Card';
-// import ListGroup from 'react-bootstrap/ListGroup';
-// import Image from 'react-bootstrap/Image';
-import { Modal, Button, Form, Card, ListGroup, Image } from 'react-bootstrap'
+import {Link} from "react-router-dom";
+import {Modal, Button, Form, Card, ListGroup, Image} from "react-bootstrap";
 
-import PropTypes from 'prop-types';
+import {useState} from "react";
+import {useGlobalContext} from "../context/GlobalProvider";
 
-import { useContext, useState, useRef } from 'react';
-import ProfileContext from '../context/ProfileContext';
+const DetailCard = () => {
+	// getting context
+	const {profileData, setProfileData} = useGlobalContext();
 
+	// modal field
+	const [name, setName] = useState(() => profileData.name);
+	const [age, setAge] = useState(() => profileData.age);
 
+	// modal display
+	const [show, setShow] = useState(false);
+	const handleClose = () => setShow(false);
+	const handleShow = () => setShow(true);
 
-const DetailCard = ({ userImg }) => {
-  // getting context
-  const data = useContext(ProfileContext)
-  // Assigning Reference
-  const nameRef = useRef(null)
-  const ageRef = useRef(null)
+	// on click to Save Changes
+	const setValues = () => {
+		// setName(name.trim());
 
-  // modal field
-  const [name, setName] = useState(data.name)
-  const [age, setAge] = useState(data.age)
+		if (age <= 0 || age > 100) {
+			alert("age <= 0 || age > 100");
+			handleClose();
+			return;
+		}
+		if (name.length === 0) {
+			alert("No Empty Name.");
+			handleClose();
+			return;
+		}
 
-  // modal display
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+		setProfileData({...profileData, name: name.trim(), age});
+		handleClose();
+	};
 
+	return (
+		<>
+			<div className="Detail-card">
+				<Card style={{width: "20rem"}}>
+					<div className="detail-image-wrapper">
+						<Image
+							roundedCircle
+							height={125}
+							width={125}
+							src={profileData.profilePicSrc}
+						/>
+					</div>
+					<Card.Body className="d-flex justify-content-between">
+						<Card.Title className="mt-2">profileData: </Card.Title>
+						<Button
+							variant="primary"
+							onClick={handleShow}
+							style={{width: "5rem", height: "2.25rem"}}>
+							Edit
+						</Button>
+					</Card.Body>
 
-  // on click to Save Changes
-  const setValues = () => {
-    setName(name.trim())
+					<ListGroup className="list-group-flush">
+						<ListGroup.Item>Name: {profileData.name}</ListGroup.Item>
+						<ListGroup.Item>Age: {profileData.age}</ListGroup.Item>
+					</ListGroup>
+					<Card.Body>
+						<Card.Link as={Link} to="/room" className="join-link">
+							Go to <span className="theGuy">Room</span>
+						</Card.Link>
+					</Card.Body>
+				</Card>
+			</div>
 
-    if (age <= 0 || age > 100) {
-      alert('age <= 0 || age > 100')
-      handleClose()
-      return;
-    }
-    if (name.length === 0) {
-      alert("No Empty Name.")
-      handleClose()
-      return;
-    }
+			{/* For Modal */}
 
-    data.age = age;
-    data.name = name;
+			<Modal show={show} onHide={handleClose}>
+				<Modal.Header closeButton>
+					<Modal.Title>Modal heading</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<Form>
+						<Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+							<Form.Label>Name: </Form.Label>
+							<Form.Control
+								type="name"
+								placeholder={name}
+								autoFocus
+								// ref={nameRef}
+								value={name}
+								onChange={(e) => setName(e.target.value)}
+							/>
+						</Form.Group>
+						<Form.Group
+							className="mb-3"
+							controlId="exampleForm.ControlTextarea1">
+							<Form.Label> Age </Form.Label>
+							<Form.Control
+								type="number"
+								min="1"
+								max="100"
+								rows={3}
+								// ref={ageRef}
+								value={age}
+								onChange={(e) => setAge(e.target.value)}
+							/>
+						</Form.Group>
+					</Form>
+				</Modal.Body>
+				<Modal.Footer>
+					<Button variant="secondary" onClick={handleClose}>
+						Close
+					</Button>
+					<Button variant="primary" onClick={setValues}>
+						Save Changes
+					</Button>
+				</Modal.Footer>
+			</Modal>
+		</>
+	);
+};
 
-    handleClose()
-  }
-
-  return (
-    <>
-
-      <div className="Detail-card">
-
-        <Card style={{ width: '20rem' }}>
-          <Image rounded height={125} width={150} src={userImg} style={{ margin: '15px auto' }} />
-          <Card.Body className='d-flex justify-content-between'>
-            <Card.Title className='mt-2'>Profile: </Card.Title>
-            <Button variant="primary" onClick={handleShow} style={{width: '5rem', height: '2.25rem'}}>
-              Edit
-            </Button>
-          </Card.Body>
-
-          <ListGroup className="list-group-flush">
-            <ListGroup.Item>Name: {data.name}</ListGroup.Item>
-            <ListGroup.Item>Age: {data.age}</ListGroup.Item>
-          </ListGroup>
-          <Card.Body>
-            <Card.Link as={Link} to="/room" className='join-link'>Go to <span className='theGuy'>Room</span></Card.Link>
-          </Card.Body>
-        </Card>
-      </div>
-
-      {/* For Modal */}
-
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Modal heading</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-              <Form.Label>Name: </Form.Label>
-              <Form.Control
-                type="name"
-                placeholder={data.name}
-                autoFocus
-                ref={nameRef}
-                value={name}
-                onChange={(e)=> setName(e.target.value)}
-              />
-            </Form.Group>
-            <Form.Group
-              className="mb-3"
-              controlId="exampleForm.ControlTextarea1"
-            >
-              <Form.Label> Age </Form.Label>
-              <Form.Control
-                type='number' min='1' max='100'
-                rows={3}
-                ref={ageRef} value={age}
-                onChange={(e) => setAge(e.target.value)} />
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={setValues}>
-            Save Changes
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
-
-    </>
-  )
-}
-
-DetailCard.propTypes = {
-  userImg: PropTypes.any.isRequired,
-}
-
-export default DetailCard
+export default DetailCard;

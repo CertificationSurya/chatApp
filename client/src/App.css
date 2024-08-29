@@ -11,7 +11,7 @@
 }
 
 body{
-  min-height: 100vh;
+  height: 100vh;
   overflow: hidden;
   background: var(--hover-nav-color) !important;
 }
@@ -21,6 +21,21 @@ body{
   padding: 0;
   box-sizing: border-box;
   font-family: 'Kalam', cursive;
+}
+
+/* Image style of home page */
+.detail-image-wrapper {
+  background: linear-gradient(to right, #ffefeb, #d5eaf6, #c6d9ff, #e3f9d0);
+
+  border: 1px solid #ffabab;
+  border-radius: 100%;
+  height: 134px;
+  width: 134px;
+  margin: auto; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
 }
 
 .navbar:nth-of-type(2){
@@ -86,7 +101,8 @@ body{
 .chats {
   position: relative;
   top: 0.5rem;
-  height: calc(100vh - 2rem);
+  height: 100%;
+  overflow-y: scroll;
   max-width: 60rem;
   margin: 1rem auto;
   display: grid;
@@ -134,11 +150,13 @@ body{
   color: var(--camera-hover);
 }
 
-.all-chat .joined-room{
+.all-chat .user-join-exit{
   position: absolute;
   top: 10%;
-  left: 50%;
-  transform: translateX(-50%);
+  right: 0%;
+  max-width: 6rem;
+  width: 100%;
+  font-size: smaller;
 }
 
 .all-chat .chat-message{
@@ -157,7 +175,7 @@ body{
 }
 
 .all-chat .chat-message.mine .message{
-  text-align: end;
+  text-align: start;
   width: auto;
   padding: 2px 0.75rem;
 }
@@ -177,7 +195,7 @@ body{
   padding-left: 10px;
 }
 .all-chat .chat-message.others .message{
-  text-align: end;
+  text-align: start;
   width: fit-content;
   padding: 2px 0.75rem;
 }
@@ -187,7 +205,7 @@ body{
 
 .all-chat .message{
   width: 100%;
-  text-overflow: clip;
+  /* text-overflow: clip; */
   background-color: var(--camera-hover);
   border-radius: 1rem;
   z-index: 2;

@@ -5,70 +5,93 @@ const server = require("http").Server(app);
 // accept url parameter
 // app.use(express.urlencoded({ extended: true }));
 
-let roomUsers = [];
-let globalUsers = [];
+/**
+ * @typedef {Object} User
+ * @property {string} socketId - user Socket id
+ * @property {string} username - username
+ */
 
-const checkExistingUser = (userDataObj, typeOfRoom = []) => {
-  return typeOfRoom.filter(
-    (userData) => userData.userId === userDataObj.userId
-  );
-};
+/**
+ * @typedef {Map<string, Map<string, string>>} RoomUserMap
+ * @description (roomId, [(user1SocketId, name), (user2SocketId, name)])
+ */
+
+/** @type {RoomUserMap} */
+let roomUsers = new Map();
+let globalUsers = new Map();
+
 
 const io = require("socket.io")(server, {
-  cors: { origin: "*" },
+	cors: {origin: "*"},
 });
 
 io.on("connection", (socket) => {
-  // console.log('a user connected');
-  io.emit("gUserJoined", socket.id);
+	// user joined and exited in global and room
+	socket.on("userJoined", ({name, roomId = null}) => {
+		// console.log(name, roomId);
 
-  socket.on("message", (message) => {
-    console.log(socket.id);
-    io.emit("message", message);
-  });
+		if (!roomId) {
+			if (!globalUsers.has(socket.id)) {
+				globalUsers.set(socket.id, name);
+			}
+		} else {
+			// if we already have room
+			if (roomUsers.has(roomId)) {
+				roomUsers.get(roomId).set(socket.id, name);
+			} else {
+				const newJoineeMap = new Map([[socket.id, name]]);
+				roomUsers.set(roomId, newJoineeMap);
+				// console.log(roomUsers);
+			}
+		}
+		// console.log(globalUsers);
+		if (roomId) {
+			socket.join(roomId);
+			io.to(roomId).emit("userJoined", {name, joineeId: socket.id});
+		} else io.emit("gUserJoined", {name, joineeId: socket.id});
+	});
 
-  socket.on("join_room", (message) => {
-    // adding users
-    if (checkExistingUser(message, roomUsers).length == 0) {
-      const { userId, userName, roomId } = message;
-      roomUsers.push({ userId, userName, roomId });
-    //   socket.emit("JoinedUser", userName);
-      io.emit("JoinedUser",roomUsers[roomUsers.length-1].userName);
-    }
+	socket.on("userExited", (roomId = null) => {
+		const socketId = socket.id;
+		let exitedUserName = "";
 
-    // console.log(roomUsers);
-    // Join the room
-    socket.join(message.roomId);
-    io.emit("userJoined", message, roomUsers);
-  });
+		if (!roomId) {
+			if (globalUsers.has(socketId)) {
+				exitedUserName = globalUsers.get(socketId);
+				// console.log(exitedUserName);
+				globalUsers.delete(socket.id);
+			}
+		} else {
+			if (roomUsers.get(roomId)) {
+				exitedUserName = roomUsers.get(roomId).get(socketId);
+				const userMap = roomUsers.get(roomId);
+				userMap.delete(socketId);
+			}
+		}
 
-  // user Exit
-  socket.on("exit_room", (userDataObj) => {
-    // removing users
-    roomUsers = roomUsers.filter(
-      (item) => item.userId !== userDataObj.senderId
-    );
-    console.log("RoomUser After exit", roomUsers);
+		if (roomId) io.to(roomId).emit("userExited", exitedUserName);
+		else io.emit("gUserExited", exitedUserName);
+	});
+	// Ends
 
-    io.to(userDataObj.roomId).emit("userExitted", userDataObj.name);
-  });
+	socket.on("message", (message) => {
+		console.log(socket.id);
+		io.emit("message", message);
+	});
 
-  socket.on("G-message", (messageObj) => {
-    io.emit("roomMessage", messageObj);
-  });
 
-  socket.on("createRoom", (messageObj) => {
-    io.emit("roomCreated", messageObj);
-  });
+	socket.on("roomMessage", (messageObj) => {
+		io.to(messageObj.roomId).emit("roomMessage", messageObj);
+	});
 
-  socket.on("gUserJoined", (data) => {
-    console.log(data);
-    socket.emit("JoinedUser", data.name);
-  });
+	socket.on("createRoom", (messageObj) => {
+		io.emit("roomCreated", messageObj);
+	});
 
-  // server.on('disconnect', ()=>{
-  //     io.emit('roomDisconnect', socket.id)
-  // })
+	// io.on('disconnect', ()=>{
+	//   console.log(socket)
+	//   io.emit("roomDisconnect", socket.id);
+	// })
 });
 
 server.listen(8080, () => console.log("listening on http://localhost:8080"));

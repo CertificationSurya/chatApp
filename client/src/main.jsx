@@ -1,19 +1,20 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
+
 import './index.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import ProfileState from './context/ProfileState.jsx'
 
 import { BrowserRouter as Router } from 'react-router-dom'
+import GlobalProvider from './context/GlobalProvider.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
 
-    <ProfileState>
+    <GlobalProvider>
       <Router>
         <App />
       </Router>
-    </ProfileState>
+    </GlobalProvider>
   </React.StrictMode>,
 )
