@@ -1,11 +1,10 @@
-import {useState, useContext, useEffect} from "react";
+import {useState, useEffect} from "react";
 
 /** @typedef {import ("../../js_docs/chatType.js").GlobalUserJoinedObjType GlobalUserJoinedObjType} */
 
 // Added Socket io
 import {socket} from "../socket";
 import ChatFragment from "./ChatFragment";
-import PropTypes from "prop-types";
 import {useGlobalContext} from "../context/GlobalProvider";
 // let gUsers = [];
 
@@ -15,12 +14,13 @@ const GlobalChats = () => {
 
 	const [newUser, setNewUser] = useState("");
 	const [exitGuy, setExitGuy] = useState("");
+	const [onlineUsers, setOnlineUsers] = useState([]);
 
 	const [text, setText] = useState("");
 	const [messages, setMessages] = useState([]);
 	useEffect(() => {
 		const handleMessage = (messageObj) => {
-			const isMine = messageObj.senderId === socket.id;
+			const isMine = (messageObj.senderId === socket.id);
 			setMessages((prevMessages) => [
 				{
 					senderId: messageObj.senderId,
@@ -34,17 +34,21 @@ const GlobalChats = () => {
 
 		/** @param {GlobalUserJoinedObjType} joineeObj  */
 		const handleJoinedUser = (joineeObj) => {
-			const {name, joineeId} = joineeObj;
+			const {name, joineeId, onlineUsers} = joineeObj;
 			if (joineeId !== socket.id) {
 				setNewUser(name);
-				console.log(name);
+			} else {
+				setNewUser("You")
 			}
+			setOnlineUsers(onlineUsers)
 		};
 
 		/** @param {string} name */
-		const handleUserExit = (name) => {
-			console.log(name)
+		/** @param {string[]} newOnlineUsers */
+		const handleUserExit = ({name, newOnlineUsers}) => {
+			// console.log(name)
 			setExitGuy(name);
+			setOnlineUsers(newOnlineUsers);
 		};
 
 		socket.on("message", handleMessage);
@@ -71,11 +75,10 @@ const GlobalChats = () => {
 		text.trim();
 		if (text.length > 0) {
 			socket.emit("message", {senderId: socket.id, message: text, name});
-			setText("");
 		} else {
-			setText("");
 			alert("please fill the field before sending");
 		}
+		setText("");
 	};
 
 	return (
@@ -88,6 +91,7 @@ const GlobalChats = () => {
 			setNewUser={setNewUser}
 			exitGuy={exitGuy}
 			setExitGuy={setExitGuy}
+			onlineUsers={onlineUsers}
 		/>
 	);
 };

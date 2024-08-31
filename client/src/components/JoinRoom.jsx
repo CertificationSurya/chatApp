@@ -6,13 +6,13 @@ import ChatFragment from "./ChatFragment";
 import {useGlobalContext} from "../context/GlobalProvider";
 
 const JoinRoom = () => {
-	const {profileData, noEscape, setNoEscape} = useGlobalContext();
+	const {profileData} = useGlobalContext();
 	const {name} = profileData;
 
 	const [exitGuy, setExitGuy] = useState("");
 	const [newUser, setNewUser] = useState("");
 	const [gMessages, setGMessages] = useState([]);
-	const [users, setUsers] = useState([]);
+	const [onlineUsers, setOnlineUsers] = useState([]);
 
 	// setup get data from url
 	const location = useLocation();
@@ -45,19 +45,24 @@ const JoinRoom = () => {
 	};
 
 	useEffect(() => {
-		const handleUserJoined = ({joineeId: userId, name: userName}) => {
-			console.log(userId, userName, socket.id);
-			if (userId !== socket.id) {
+		const handleUserJoined = ({
+			joineeId,
+			name,
+			onlineUsers,
+		}) => {
+			if (joineeId !== socket.id) {
 				setNewUser(name);
-				const ExistingUser = users.find((user) => user.userId === userId);
-				if (!ExistingUser) {
-					setUsers((prev) => [...prev, {userName, userId}]);
-				}
+			} else {
+				setNewUser("You")
 			}
+			// console.log(onlineUsers)
+			setOnlineUsers(onlineUsers);
 		};
 
-		const handleUserExited = (name) => {
+		const handleUserExited = ({name, newOnlineUsers}) => {
+			// console.log(newOnlineUsers)
 			setExitGuy(name);
+			setOnlineUsers(newOnlineUsers)
 		};
 
 		/**
@@ -108,10 +113,9 @@ const JoinRoom = () => {
 				roomName={roomName}
 				newUser={newUser}
 				setNewUser={setNewUser}
-				roomId={roomId}
-				name={name}
 				exitGuy={exitGuy}
 				setExitGuy={setExitGuy}
+				onlineUsers={onlineUsers}
 			/>
 		</>
 	);

@@ -45,7 +45,7 @@ const NavBar = () => {
 				className={`navbar ${noEscape ? "" : "navActive"}`}>
 				<Container>
 					<Navbar.Brand as={Link} to="/">
-						ChatApp 101
+						Certi-ChatApp
 					</Navbar.Brand>
 					<Nav className="nav-items | me-auto ">
 						<Nav.Link
@@ -79,7 +79,7 @@ const NavBar = () => {
 							Rooms
 						</Nav.Link>
 					</Nav>
-					<Nav>
+					<Nav className="profile-img-wrapper">
 						<input
 							ref={fileRef}
 							onChange={handleFileChange}

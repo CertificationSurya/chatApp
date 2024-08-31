@@ -39,9 +39,10 @@ const DetailCard = () => {
 	return (
 		<>
 			<div className="Detail-card">
-				<Card style={{width: "20rem"}}>
+				<Card style={{width: "20rem", border: 0}}>
 					<div className="detail-image-wrapper">
 						<Image
+							className="detail-image"
 							roundedCircle
 							height={125}
 							width={125}

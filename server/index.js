@@ -17,10 +17,29 @@ const server = require("http").Server(app);
  */
 
 /** @type {RoomUserMap} */
-let roomUsers = new Map();
-let globalUsers = new Map();
+const roomUsers = new Map();
+const globalUsers = new Map();
 
+// utils function
+/** @returns {Array<string>} */
+const getGlobalUsers = () => {
+	return Array.from(globalUsers.values());
+};
+/**
+ * @param {string} roomId
+ *  @returns {Array<string>}
+ * */
+const getRoomUsers = (roomId) => {
+	// console.log(roomId)
+	try {
+		const roomMap = roomUsers.get(roomId);
+		return Array.from(roomMap.values());
+	} catch (error) {
+		return [];
+	}
+};
 
+// socket stuff
 const io = require("socket.io")(server, {
 	cors: {origin: "*"},
 });
@@ -47,8 +66,19 @@ io.on("connection", (socket) => {
 		// console.log(globalUsers);
 		if (roomId) {
 			socket.join(roomId);
-			io.to(roomId).emit("userJoined", {name, joineeId: socket.id});
-		} else io.emit("gUserJoined", {name, joineeId: socket.id});
+			const onlineUsers = getRoomUsers(roomId);
+			// console.log(onlineUsers)
+
+			io.to(roomId).emit("userJoined", {
+				name,
+				joineeId: socket.id,
+				onlineUsers,
+			});
+		} else {
+			const onlineUsers = getGlobalUsers();
+			// console.log(onlineUsers);
+			io.emit("gUserJoined", {name, joineeId: socket.id, onlineUsers});
+		}
 	});
 
 	socket.on("userExited", (roomId = null) => {
@@ -69,18 +99,29 @@ io.on("connection", (socket) => {
 			}
 		}
 
-		if (roomId) io.to(roomId).emit("userExited", exitedUserName);
-		else io.emit("gUserExited", exitedUserName);
+		if (roomId) {
+			// console.log(roomId);
+			const onlineRoomUsers = getRoomUsers(roomId);
+			io.to(roomId).emit("userExited", {
+				name: exitedUserName,
+				newOnlineUsers: onlineRoomUsers,
+			});
+		} else {
+			const onlineGlobalUsers = getGlobalUsers();
+			io.emit("gUserExited", {
+				name: exitedUserName,
+				newOnlineUsers: onlineGlobalUsers,
+			});
+		}
 	});
 	// Ends
 
-	socket.on("message", (message) => {
-		console.log(socket.id);
-		io.emit("message", message);
+	socket.on("message", (messageObj) => {
+		io.emit("message", messageObj);
 	});
 
-
 	socket.on("roomMessage", (messageObj) => {
+		console.log(messageObj.roomId);
 		io.to(messageObj.roomId).emit("roomMessage", messageObj);
 	});
 
@@ -88,10 +129,33 @@ io.on("connection", (socket) => {
 		io.emit("roomCreated", messageObj);
 	});
 
-	// io.on('disconnect', ()=>{
-	//   console.log(socket)
-	//   io.emit("roomDisconnect", socket.id);
-	// })
+	socket.on("disconnect", () => {
+		const globalUserName = globalUsers.get(socket.id);
+
+		if (globalUserName) {
+			globalUsers.delete(socket.id);
+
+			io.emit("gUserExited", {
+				name: globalUserName,
+				newOnlineUsers: getGlobalUsers(),
+			});
+		}
+
+		for (let [roomId, users] of roomUsers) {
+			if (users.has(socket.id)) {
+				const name = users.get(socket.id);
+				users.delete(socket.id);
+
+				const exitObj = {
+					name,
+					newOnlineUsers: getRoomUsers(roomId),
+				};
+				io.to(roomId).emit("userExited", exitObj);
+			}
+		}
+		// console.log(socket.id);
+		io.emit("roomDisconnect", socket.id);
+	});
 });
 
 server.listen(8080, () => console.log("listening on http://localhost:8080"));

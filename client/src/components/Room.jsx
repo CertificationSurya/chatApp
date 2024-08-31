@@ -57,7 +57,7 @@ const Room = () => {
 	return (
 		<div className="chats roomProfile d-flex  align-items-center">
 			<div className="available-rooms">
-				<Card style={{width: "18rem"}}>
+				<Card style={{width: "18rem"}} className="scrollbar">
 					<Card.Body>
 						<Card.Title className="text-center">
 							{" "}
@@ -66,10 +66,10 @@ const Room = () => {
 					</Card.Body>
 
 					{availableRooms &&
-						availableRooms.map((room) => (
+						availableRooms.map((room, idx) => (
 							<ListGroup
-								className="list-group-flush border-0  pb-2"
-								key={room.uid}>
+								className="list-group-flush border-0 pb-2"
+								key={idx}>
 								<ListGroup className="d-flex flex-row justify-content-between align-items-center px-3">
 									<span>{room.roomName}</span>
 									<Link to={`/room/${room.roomName}?uid=${room.uid}`}>
@@ -79,7 +79,7 @@ const Room = () => {
 											active
 											onClick={() => {
 												setNoEscape(true);
-												console.log("d");
+												// console.log("d");
 											}}>
 											Join this Room
 										</Button>

@@ -9,10 +9,11 @@ import "./App.css";
 import Room from "./components/Room";
 import JoinRoom from "./components/JoinRoom";
 import {useGlobalContext} from "./context/GlobalProvider";
+
 const App = () => {
-	const {noEscape, setNoEscape} = useGlobalContext();
+	const {noEscape} = useGlobalContext();
 	return (
-		<div>
+		<div className="layout-wrapper">
 			{!noEscape && <NavBar />}
 			<Routes>
 				{!noEscape && <Route exact path="/" element={<NavBar />} />}

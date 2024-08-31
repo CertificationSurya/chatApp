@@ -1,13 +1,6 @@
 import PropTypes from 'prop-types'
 
-const ChatItems = ({messageObj, index}) => {
-
-    // console.log(messageObj.message)
-    
-    const maxLimit = index > 6;
-    // const last5message = 
-   
-if (!maxLimit) {
+const ChatItems = ({messageObj}) => {
   return (
     
         <div className={`chat-message scale-up ${messageObj.isMine ? 'mine' : 'others'}`}>
@@ -18,12 +11,8 @@ if (!maxLimit) {
     )
 }
 
-}
-
 ChatItems.propTypes = {
     messageObj: PropTypes.object.isRequired,
-    index: PropTypes.number.isRequired,
-    // newUser: PropTypes.string.isRequired
 }
 
 export default ChatItems
